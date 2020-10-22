@@ -25,12 +25,8 @@ if __name__ == "__main__":
 
     file_path = Path(args.file_path).expanduser()
     slide = OpenSlide(str(file_path))
-    print(slide.level_dimensions)
-    print(slide.level_downsamples)
     mpp_x = slide.properties[PROPERTY_NAME_MPP_X]
     mpp_y = slide.properties[PROPERTY_NAME_MPP_Y]
-    print(mpp_x, mpp_y)
-    pprint(dict(slide.properties))
 
     dzg = DeepZoomGenerator(
         slide,
