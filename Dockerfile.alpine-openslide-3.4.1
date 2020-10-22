@@ -1,0 +1,32 @@
+FROM python:3.8-alpine
+
+# Install libaries
+RUN apk update && apk add \
+build-base \
+cairo-dev \
+gdk-pixbuf-dev \
+glib-dev \
+libjpeg-turbo-dev \
+libxml2-dev \
+openjpeg-dev \
+sqlite-dev \
+tiff-dev \
+zlib-dev \
+autoconf \
+automake \
+libtool \
+pkgconfig \
+curl
+
+ARG OPENSLIDE_VERSION=3.4.1
+RUN curl -fL https://github.com/openslide/openslide/releases/download/v${OPENSLIDE_VERSION}/openslide-${OPENSLIDE_VERSION}.tar.gz -o openslide.tar.gz \
+&& tar xf openslide.tar.gz \
+&& cd openslide-${OPENSLIDE_VERSION} \
+&& ./configure \
+&& make \
+&& make install
+ENV LD_LIBRARY_PATH=/usr/local/lib/
+
+RUN pip3 install --user openslide-python
+ADD ./test.py /root/test.py
+ENV PATH=${PATH}:/root

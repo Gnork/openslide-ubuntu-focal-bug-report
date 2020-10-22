@@ -1,0 +1,32 @@
+FROM docker.io/ubuntu:18.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+&& apt-get install -y python3-venv python3-pip git curl
+
+RUN apt-get install -y unzip \
+libjpeg-dev \
+libtiff-dev \
+libglib2.0-dev \
+libcairo2-dev \
+ibgdk-pixbuf2.0-dev \
+libxml2-dev libsqlite3-dev \
+zlib1g-dev \
+libopenjp2-tools \
+libopenjp2-7-dev \
+autoconf \
+automake \
+libtool \
+pkg-config
+ARG OPENSLIDE_VERSION=3.4.1
+RUN curl -fL https://github.com/openslide/openslide/releases/download/v${OPENSLIDE_VERSION}/openslide-${OPENSLIDE_VERSION}.tar.gz -o openslide.tar.gz \
+&& tar xf openslide.tar.gz \
+&& cd openslide-${OPENSLIDE_VERSION} \
+&& ./configure \
+&& make \
+&& make install
+ENV LD_LIBRARY_PATH=/usr/local/lib/
+
+RUN pip3 install --user openslide-python==1.1.2
+ADD ./test.py /root/test.py
+ENV PATH=${PATH}:/root

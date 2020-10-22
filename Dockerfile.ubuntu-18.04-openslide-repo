@@ -1,0 +1,11 @@
+FROM docker.io/ubuntu:18.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+&& apt-get install -y python3-venv python3-pip git curl
+
+RUN apt-get install -y openslide-tools
+
+RUN pip3 install --user openslide-python==1.1.2
+ADD ./test.py /root/test.py
+ENV PATH=${PATH}:/root
