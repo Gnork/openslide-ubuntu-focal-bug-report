@@ -12,6 +12,8 @@ TAGS=(
 "alpine-openslide-3.4.1"
 "ubuntu-18.04-openslide-repo"
 "ubuntu-20.04-openslide-repo"
+"ubuntu-20.04-openslide-master-workaround"
+"ubuntu-20.10-openslide-repo"
 )
 for TAG in ${TAGS[*]}; do
     docker build -f Dockerfile.${TAG} -t ${IMAGE}:${TAG} .

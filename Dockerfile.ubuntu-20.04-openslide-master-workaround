@@ -1,0 +1,45 @@
+
+FROM docker.io/ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+&& apt-get install -y python3-venv python3-pip git curl
+
+RUN apt-get install -y unzip \
+libjpeg-dev \
+libtiff-dev \
+libglib2.0-dev \
+libcairo2-dev \
+ibgdk-pixbuf2.0-dev \
+libxml2-dev libsqlite3-dev \
+zlib1g-dev \
+libopenjp2-tools \
+libopenjp2-7-dev \
+autoconf \
+automake \
+libtool \
+pkg-config
+
+ARG OPENSLIDE_VERSION=46a0706506c6cca8f1fbb51f49516721b6d5c9d0
+RUN curl -fL https://github.com/openslide/openslide/archive/${OPENSLIDE_VERSION}.zip -o openslide.zip \
+&& unzip openslide.zip \
+&& cd openslide-${OPENSLIDE_VERSION} \
+&& autoreconf -i \
+&& ./configure \
+&& make \
+&& make install
+ENV LD_LIBRARY_PATH=/usr/local/lib/
+
+ARG PIXMAN_VERSION=85467ec308f8621a5410c007491797b7b1847601
+RUN curl -fL https://github.com/libpixman/pixman/archive/${PIXMAN_VERSION}.zip -o pixman.zip \
+&& unzip pixman.zip \
+&& cd pixman-${PIXMAN_VERSION} \
+&& ./autogen.sh \
+&& ./configure \
+&& make \
+&& make install
+ENV LD_PRELOAD=/usr/local/lib/libpixman-1.so.0.35.1
+
+RUN pip3 install --user openslide-python==1.1.2
+ADD ./test.py /root/test.py
+ENV PATH=${PATH}:/root
